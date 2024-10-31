@@ -1,24 +1,27 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Obtener los valores del formulario
-    $name = htmlspecialchars($_POST['name']);
-    $age = htmlspecialchars($_POST['age']);
+    $servername = "127.0.0.1";
+    $username = "Alberto";
+    $password  = "@Alberto123@";
+    $dbname = "prueba";
 
-    // Comprobar si los valores son válidos
-    if (!empty($name) && !empty($age)) {
-        // Crear o abrir un archivo para guardar los datos
-        $file = 'datos.txt';
-        $data = "Nombre: $name, Edad: $age\n";
+    /* Crear una conexión con la base de datos */
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
-        // Guardar los datos en el archivo
-        file_put_contents($file, $data, FILE_APPEND | LOCK_EX);
-
-        // Redirigir o mostrar un mensaje de éxito
-        echo "Datos guardados correctamente.";
-    } else {
-        echo "Por favor, complete todos los campos.";
+    /* Comprobar la conexión */
+    if ($conn->connect_error) {
+        die("Error en la conexión: " . $conn->connect_error);
     }
-} else {
-    echo "Método de solicitud no permitido.";
-}
+
+    /* Comprobar si se ha enviado el formulario */
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $nombre = $_POST["nombre"];
+        $edad = $_POST["edad"];
+        $sql = "INSERT INTO personas (nombre, edad) VALUES ('$nombre', $edad)";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Datos insertados correctamente";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
 ?>
